@@ -1,4 +1,8 @@
 [
+  "hubot-ambush",
+  "hubot-humanity",
+  "hubot-fliptable",
+  "hubot-darksky",
   "hubot-diagnostics",
   "hubot-help",
   "hubot-heroku-keepalive",

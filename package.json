@@ -19,6 +19,10 @@
     "hubot-shipit": "^0.1.1",
     "hubot-slack": "^3.2.1",
     "hubot-plusplus": "^1.1.2",
+    "hubot-ambush": "latest",
+    "hubot-humanity": "latest",
+    "hubot-fliptable": "latest",
+    "hubot-darksky": "latest",
     "hubot-youtube": "^0.1.2"
   },
   "engines": {

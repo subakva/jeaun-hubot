@@ -10,7 +10,7 @@
 # Commands:
 #   countdown set #meetupname# #datestring# e.g. countdown set punerbmeetup 21 Jan 2014
 #   countdown [for] #meetupname# e.g. countdown punerbmeetup
-#   countdown list 
+#   countdown list
 #   countdown delete #meetupname# e.g. countdown delete seattlerbmeetup
 #   countdown clear
 #
@@ -22,54 +22,82 @@
 
 module.exports = (robot) ->
 
+  getCountdowns = ->
+    countdowns = robot.brain.get("countdowns")
+    if not countdowns
+      countdowns = {}
+      saveCountdowns(countdowns)
+    countdowns
+
+  saveCountdowns = (countdowns) ->
+    robot.brain.set("countdowns", countdowns)
+
+  getCountdown = (eventName) ->
+    countdowns = getCountdowns()
+    countdowns[eventName] if countdowns.hasOwnProperty(eventName)
+
+  saveCountdown = (eventName, date) ->
+    countdowns = getCountdowns()
+    countdowns[eventName] = {
+      "date" : date.toDateString(),
+      "eventName": eventName
+    }
+    saveCountdowns(countdowns)
+    getCountdown(eventName)
+
   # Get countdown message
-  getCountdownMsg = (countdownKey) ->
+  getCountdownMsg = (countdown) ->
     now = new Date()
-    eventTime = new Date(robot.brain.data.countdown[countdownKey].date)
+    eventTime = new Date(countdown.date)
     gap = eventTime.getTime() - now.getTime()
     gap =  Math.floor(gap / (1000 * 60 * 60 * 24));
-    "Only #{gap} days remaining till #{countdownKey}!"
+    "Only #{gap} days remaining till #{countdown.eventName}!"
 
   robot.hear /countdown set (\w+) (.*)/i, (msg) ->
-    robot.brain.data.countdown or= {}
-
     dateString = msg.match[2];
 
-    try 
+    try
       date = new Date(dateString);
       if date == "Invalid Date"
         throw "Invalid date passed"
-      countdownKey = msg.match[1]
+      eventName = msg.match[1]
 
-      robot.brain.data.countdown[countdownKey] = {"date" : date.toDateString()} 
-      msg.send "Countdown set for #{countdownKey} at #{date.toDateString()}"
-      msg.send getCountdownMsg(countdownKey)  if robot.brain.data.countdown.hasOwnProperty(countdownKey)
+      countdown = saveCountdown(eventName, date)
+      msg.send "Countdown set for #{countdown.eventName} at #{countdown.date}"
+      msg.send getCountdownMsg(countdown)
     catch error
         console.log(error.message)
         msg.send "Invalid date passed!"
 
   robot.hear /countdown list/i, (msg) ->
-    countdowns = robot.brain.data.countdown;
-    for countdownKey of countdowns
-      msg.send countdownKey + " -> " + new Date(countdowns[countdownKey].date).toDateString() +
-        " -> " + getCountdownMsg(countdownKey) if countdowns.hasOwnProperty(countdownKey)
+    countdowns = getCountdowns()
+    for eventName of countdowns
+      countdown = countdowns[eventName]
+      msg.send eventName + " -> " + countdown.date +
+        " -> " + getCountdownMsg(countdown)
 
   robot.hear /(countdown)( for)? (.*)/, (msg) ->
-    countdownKey = msg.match[3]
-    countdowns = robot.brain.data.countdown;
-    msg.send getCountdownMsg(countdownKey)  if countdowns.hasOwnProperty(countdownKey)
+    eventName = msg.match[3]
+    countdown = getCountdown(eventName)
+    if countdown
+      msg.send getCountdownMsg(countdown)
+    else
+      msg.send "No such countdown: #{eventName}"
 
   robot.hear /countdown clear/i, (msg) ->
-    robot.brain.data.countdown = {}
+    saveCountdowns({})
     msg.send "Countdowns cleared"
 
   robot.hear /countdown delete (.*)/i, (msg) ->
-    countdownKey = msg.match[1]
-    if robot.brain.data.countdown.hasOwnProperty(countdownKey)
-      delete robot.brain.data.countdown[countdownKey]
-      msg.send "Countdown for #{countdownKey} deleted."
+    eventName = msg.match[1]
+    countdown = getCountdown(eventName)
+    if countdown
+      countdowns = getCountdowns()
+      delete countdowns[eventName]
+      saveCountdowns(countdowns)
+      msg.send "Countdown for #{eventName} deleted."
     else
-      msg.send "Countdown for #{countdownKey} does not exist!"
+      msg.send "No such countdown: #{eventName}"
 
   robot.hear /countdown set$|countdown help/i, (msg) ->
     msg.send "countdown set #meetupname# #datestring# e.g. countdown set PuneRubyMeetup 21 Jan 2014"

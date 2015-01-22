@@ -81,8 +81,6 @@ module.exports = (robot) ->
     countdown = getCountdown(eventName)
     if countdown
       msg.send getCountdownMsg(countdown)
-    else
-      msg.send "No such countdown: #{eventName}"
 
   robot.hear /countdown clear/i, (msg) ->
     saveCountdowns({})

@@ -23,6 +23,12 @@
     "hubot-humanity": "latest",
     "hubot-fliptable": "latest",
     "hubot-darksky": "latest",
+    "hubot-has-no-idea": "latest",
+    "hubot-wolfram": "latest",
+    "hubot-ikr": "latest",
+    "hubot-nietzche": "latest",
+    "hubot-thank-you": "latest",
+    "underscore": "latest",
     "hubot-youtube": "^0.1.2"
   },
   "engines": {

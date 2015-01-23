@@ -359,15 +359,30 @@ lines_by_key = _.reduce(all_lines, (memo, line) ->
 , {})
 
 module.exports = (robot) ->
+  sendLine = (msg, line) ->
+    msg.send "#{line.speaker}: #{line.text}"
+
   robot.hear /drpoop me/i, (msg) ->
     line = msg.random all_lines
-    msg.send "#{line.speaker}: #{line.text}"
+    sendLine(msg, line)
 
   robot.hear /how many hands/i, (msg) ->
     line = lines_by_key['huge_palomino']
-    msg.send "#{line.speaker}: #{line.text}"
+    sendLine(msg, line)
 
   robot.hear /huge palomino/i, (msg) ->
     line = lines_by_key['all_the_time']
-    msg.send "#{line.speaker}: #{line.text}"
+    sendLine(msg, line)
+
+  robot.hear /witch/i, (msg) ->
+    line = lines_by_key['witch']
+    sendLine(msg, line)
+
+  robot.hear /straight shooter/i, (msg) ->
+    line = lines_by_key['straight_shooter']
+    sendLine(msg, line)
+
+  robot.hear /do the robot/i, (msg) ->
+    line = lines_by_key['do_the_robot']
+    sendLine(msg, line)
 

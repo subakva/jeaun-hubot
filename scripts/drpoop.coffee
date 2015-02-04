@@ -8,7 +8,11 @@
 #   None
 #
 # Commands:
-#   drpoop me
+#   drpoop me - Prints a random line from the script
+#   drpoop find <pattern> - Finds lines in the script that match the pattern
+#   drpoop start - Recites the first line from the script and starts listening for cues to continue.
+#   drpoop next|go|more - Recites the next line from the script.
+#   drpoop stop - Stops listening for cues to recite the script.
 #
 # Notes:
 #   None
@@ -92,6 +96,7 @@ all_lines = [
     text: "[phone rings] Hold on."
   },
   {
+    key: 'old_chester',
     speaker: 'Doctor',
     text: "Hello. Beverly! How the hell.. what?! No! Old Chester?!"
   },
@@ -100,7 +105,6 @@ all_lines = [
     text: "A palomino? They're beautiful. Yes."
   },
   {
-    key: 'how_many_hands',
     speaker: 'Doctor',
     text: "How many hands?"
   },
@@ -149,6 +153,7 @@ all_lines = [
     text: "You know we can hear you."
   },
   {
+    key: 'roll_in_the_hay',
     speaker: 'Doctor',
     text: "At least his wife's got a big enough ass for a nice roll in the hay."
   },
@@ -315,8 +320,9 @@ all_lines = [
     text: "I think so. Listen when did you misplace our baby?"
   },
   {
+    key: 'bodeans_concert'
     speaker: 'Doctor',
-    text: "It was right after we delivered it..I, uh, went out to grab a bite to eat, I forgot I had him with me. Then I met some friend's for a beer, went to a Bodine's concert, and, son of a vondruke, if I didn't leave him at the concert hall. Thank god they had him, the next day at lost and found. Then I just flat out lost him."
+    text: "It was right after we delivered it..I, uh, went out to grab a bite to eat, I forgot I had him with me. Then I met some friend's for a beer, went to a BoDean's concert, and, son of a vondruke, if I didn't leave him at the concert hall. Thank god they had him, the next day at lost and found. Then I just flat out lost him."
   },
   {
     key: 'straight_shooter',
@@ -362,8 +368,72 @@ module.exports = (robot) ->
   sendLine = (msg, line) ->
     msg.send "#{line.speaker}: #{line.text}"
 
+  setPoopIndex = (index) ->
+    robot.brain.set("drpoop-index", index)
+
+  getPoopIndex = (index) ->
+    robot.brain.get("drpoop-index")
+
+  startPoopScript = ->
+    setPoopIndex(0)
+
+  peekPoopScript = ->
+    index = getPoopIndex()
+    index = 0 if index == null || index == all_lines.length
+    all_lines[index]
+
+  advancePoopScript = ->
+    index = getPoopIndex()
+    index = 0 if index == null || index == all_lines.length
+    setPoopIndex(index + 1)
+    all_lines[index]
+
+  poopScriptRunning = ->
+    getPoopIndex() != null
+
+  stopPoopScript = ->
+    setPoopIndex(null)
+
+  findLines = (searchText) ->
+    matchExpr = ///#{searchText}///i
+    _.reduce(all_lines, (memo, line) ->
+      memo.push(line) if line.text.match(matchExpr)
+      memo
+    , [])
+
+  robot.hear /drpoop start/i, (msg) ->
+    startPoopScript()
+    msg.send "Okay, starting Dr. Poop. ('drpoop go' for more)"
+    line = advancePoopScript()
+    sendLine(msg, line)
+
+  robot.hear /drpoop (next|go|more)/i, (msg) ->
+    startPoopScript() if !poopScriptRunning()
+    line = advancePoopScript()
+    sendLine(msg, line)
+
+  # robot.hear /(.*)/i, (msg) ->
+  #   if poopScriptRunning()
+  #     line = peekPoopScript()
+  #     if line.text.match(///#{msg.match[1]}///i)
+  #       advancePoopScript()
+  #       line = advancePoopScript()
+  #       sendLine(msg, line)
+
+  robot.hear /drpoop stop/i, (msg) ->
+    stopPoopScript()
+    msg.send "Okay, stopping Dr. Poop."
+
+  robot.hear /drpoop find (.*)/i, (msg) ->
+    searchText = msg.match[1]
+    _.each(findLines(searchText), (line) ->
+      sendLine(msg, line)
+    )
+
   robot.hear /drpoop me/i, (msg) ->
-    line = msg.random all_lines
+    # Only choose from the keyed lines to keep it interesting.
+    randomKey = msg.random Object.keys(lines_by_key)
+    line = lines_by_key[randomKey]
     sendLine(msg, line)
 
   robot.hear /how many hands/i, (msg) ->
@@ -382,7 +452,7 @@ module.exports = (robot) ->
     line = lines_by_key['straight_shooter']
     sendLine(msg, line)
 
-  robot.hear /do the robot/i, (msg) ->
+  robot.hear /(do the robot|five thousand dollars)/i, (msg) ->
     line = lines_by_key['do_the_robot']
     sendLine(msg, line)
 

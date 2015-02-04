@@ -32,13 +32,18 @@ module.exports = (robot) ->
   saveCountdowns = (countdowns) ->
     robot.brain.set("countdowns", countdowns)
 
+  getEventKey = (eventName) ->
+    eventName.toLowerCase()
+
   getCountdown = (eventName) ->
     countdowns = getCountdowns()
-    countdowns[eventName] if countdowns.hasOwnProperty(eventName)
+    eventKey = getEventKey(eventName)
+    countdowns[eventKey] if countdowns.hasOwnProperty(eventKey)
 
   saveCountdown = (eventName, date) ->
     countdowns = getCountdowns()
-    countdowns[eventName] = {
+    eventKey = getEventKey(eventName)
+    countdowns[eventKey] = {
       "date" : date.toDateString(),
       "eventName": eventName
     }

@@ -53,5 +53,5 @@ module.exports = (robot) ->
   robot.hear /\b(hello|hi|sup|howdy|good (morning|evening|afternoon))\b/i, (msg) ->
     msg.reply "#{robot.name} at your service!" if youTalkinToMe(msg, robot)
 
-  robot.hear /\b(bye|night|goodbye|good night)\b/i, (msg) ->
+  robot.hear /\b(bye|goodbye|good night|smell you later|buenas noches|farewell|sayonara|lates)\b/i, (msg) ->
     msg.reply msg.random farewellResponses

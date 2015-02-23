@@ -6,7 +6,7 @@
 #   hubot remember <key> is <value>. - Returns nothing. Remembers the text for next time!
 #   hubot what do you remember - Returns everything hubot remembers.
 #   hubot forget <key> - Removes key from hubots brain.
-#   hubot what are your favorite memories? - Returns a list of the most remembered memories.  
+#   hubot what are your favorite memories? - Returns a list of the most remembered memories.
 #   hubot random memory - Returns a random string
 #
 # Dependencies:
@@ -49,17 +49,17 @@ module.exports = (robot) ->
           matchingKeys = findSimilarMemories(searchPattern)
           if matchingKeys.length > 0
             value = "I remember:\n#{matchingKeys.join('\n')}"
-          else
-            value = "I don't remember anything matching `#{searchPattern}`"
+          # else
+          #   value = "I don't remember anything matching `#{searchPattern}`"
         else
           matchingKeys = findSimilarMemories(key)
           if matchingKeys.length > 0
             keys = matchingKeys.join('\n')
             value = "I don't remember `#{key}`. Did you mean:\n#{keys}"
-          else
-            value = "I don't remember anything matching `#{key}`"
+          # else
+          #   value = "I don't remember anything matching `#{key}`"
 
-      msg.send value
+      msg.send value if value?
 
   robot.respond /forget\s+(.*)/i, (msg) ->
     key = msg.match[1].toLowerCase()

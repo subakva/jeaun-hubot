@@ -30,8 +30,8 @@ module.exports = (robot) ->
           msg.send "#{name} is nothing to me."
       else if users.length > 1
         msg.send getAmbiguousUserText users
-      else
-        msg.send "#{name}? Never heard of 'em"
+      # else
+      #   msg.send "#{name}? Never heard of 'em"
 
   robot.respond /@?([\w .-_]+) is (["'\w: -_]+)[.!]*$/i, (msg) ->
     name    = msg.match[1].trim()

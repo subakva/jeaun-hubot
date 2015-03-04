@@ -304,7 +304,7 @@ all_lines = [
   },
   {
     speaker: 'Doctor',
-    text: "Look, I couldn't think of anything good. Uh, (pause). The truth is..we misplaced your baby."
+    text: "Look, I couldn't think of anything good. Uh, (pause). The truth is...we misplaced your baby."
   },
   {
     key: 'vondruke',

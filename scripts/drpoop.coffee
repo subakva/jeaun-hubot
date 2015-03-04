@@ -444,7 +444,7 @@ module.exports = (robot) ->
     line = lines_by_key['all_the_time']
     sendLine(msg, line)
 
-  robot.hear /witch/i, (msg) ->
+  robot.hear /\bwitch/i, (msg) ->
     line = lines_by_key['witch']
     sendLine(msg, line)
 

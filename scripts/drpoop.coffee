@@ -436,23 +436,23 @@ module.exports = (robot) ->
     line = lines_by_key[randomKey]
     sendLine(msg, line)
 
-  robot.hear /how many hands/i, (msg) ->
+  robot.hear /\bhow many hands\b/i, (msg) ->
     line = lines_by_key['huge_palomino']
     sendLine(msg, line)
 
-  robot.hear /huge palomino/i, (msg) ->
+  robot.hear /\bhuge palomino\b/i, (msg) ->
     line = lines_by_key['all_the_time']
     sendLine(msg, line)
 
-  robot.hear /\bwitch/i, (msg) ->
+  robot.hear /\bwitch\b/i, (msg) ->
     line = lines_by_key['witch']
     sendLine(msg, line)
 
-  robot.hear /straight shooter/i, (msg) ->
+  robot.hear /\bstraight shooter\b/i, (msg) ->
     line = lines_by_key['straight_shooter']
     sendLine(msg, line)
 
-  robot.hear /(do the robot|five thousand dollars)/i, (msg) ->
+  robot.hear /\b(do the robot|five thousand dollars)\b/i, (msg) ->
     line = lines_by_key['do_the_robot']
     sendLine(msg, line)
 

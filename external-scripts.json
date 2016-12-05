@@ -1,5 +1,6 @@
 [
   "hubot-ambush",
+  "hubot-auth"
   "hubot-humanity",
   "hubot-fliptable",
   "hubot-diagnostics",

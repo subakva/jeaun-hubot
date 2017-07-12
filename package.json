@@ -26,8 +26,5 @@
     "hubot-nietzche": "latest",
     "underscore": "latest",
     "hubot-youtube": "^0.1.2"
-  },
-  "engines": {
-    "node": "0.10.x"
   }
 }
